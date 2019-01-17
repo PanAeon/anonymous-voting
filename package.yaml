@@ -20,20 +20,20 @@ extra-source-files:
 description:         Please see the README on GitHub at <https://github.com/githubuser/anonymous-voting#readme>
 
 dependencies:
-- base >= 4.7 && < 5
+- base-noprelude >= 4.7 && < 5
 - relude
 - cryptonite
 - bytestring
 - random
 
 default-extensions:
-  - NoImplicitPrelude
   - LambdaCase
   - OverloadedStrings
   - FlexibleInstances
 
 library:
   source-dirs: src
+  
 
 executables:
   anonymous-voting-exe:
