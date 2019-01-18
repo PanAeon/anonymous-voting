@@ -30,7 +30,8 @@ default-extensions:
   - LambdaCase
   - OverloadedStrings
   - FlexibleInstances
-
+  - TypeApplications
+  
 library:
   source-dirs: src
   
