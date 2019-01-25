@@ -25,6 +25,7 @@ dependencies:
 - cryptonite
 - bytestring
 - random
+- memory
 
 default-extensions:
   - LambdaCase
