@@ -14,6 +14,7 @@ import Crypto.Number.Generate(generateMax)
 import Crypto.Number.ModArithmetic
 import qualified Data.ByteArray as BA
 import Crypto.Number.Serialize(os2ip)
+import Utils
   
 -- ! important remarks https://florianjw.de/en/insecure_generators.html
 
@@ -95,7 +96,7 @@ data SchnorrProof = SchnorrProof {
 subM :: Integer -> Integer -> Integer
 subM a b
   | a > b = (a - b) `mod` n
-  | b < n = (a + n - b) `mod` n
+  | b < n = ((a `mod` n) + n - (b `mod` n)) `mod` n
   | otherwise = error "sub b > n not implemented"
   
 prove :: MonadRandom m => Integer -> (Integer, Integer) -> m SchnorrProof
@@ -113,6 +114,7 @@ prove i (gxi, xi) =
    
 verify :: Integer -> SchnorrProof -> Bool
 verify gxi (SchnorrProof i gv r) = 
+      gv > 0 && gv < n &&
       gv ==  (gr * (expSafe gxi z n)) `mod` n
   where
     gr = expSafe g r n
@@ -121,8 +123,5 @@ verify gxi (SchnorrProof i gv r) =
               <> (show gxi)
               <> (show i)
 
---- Utils ---
 
-hash' :: ByteString -> Integer
-hash' =  os2ip . hashWith SHA256
   

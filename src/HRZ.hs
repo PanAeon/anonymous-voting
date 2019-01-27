@@ -3,6 +3,9 @@ module HRZ () where
 import           Crypto.Random.Types (MonadRandom)
 import Crypto.Number.Generate(generateMax)
 import qualified Schnorr as Sch
+import Schnorr(g,n)
+import qualified CDS as CDS
+import CDS(proveYes, proveNo, CDSProof, verifyCDS)
 import Crypto.Number.ModArithmetic
 import Data.List((!!))
 -- * From "Anonymous voting by two-round public discussion", 2010
@@ -41,8 +44,8 @@ validateZKPs  = all areValid
   where
     areValid (pk, proof) = Sch.verify pk proof
 
-computeYi :: Integer -> Integer -> Integer -> [Integer] -> Integer
-computeYi i vi xi ys = (expSafe gyi xi Sch.n) * (expSafe Sch.g vi Sch.n)
+computeYi :: Integer  -> Integer -> [Integer] -> Integer
+computeYi i xi ys = gyi
   where
     n = length ys
     as = foldl' (\r j ->  (r * (ys !! j)) `mod` Sch.n ) 1 [0..(fromIntegral i)-1]
@@ -51,6 +54,53 @@ computeYi i vi xi ys = (expSafe gyi xi Sch.n) * (expSafe Sch.g vi Sch.n)
     
 -- Round II, publish (g^xi yi) (g vi), and zkp that vi is one of [1,0]
 
+roundTwo :: (MonadRandom m) => Integer -> Integer -> Integer -> Integer -> m (Integer, CDSProof)
+roundTwo i xi vote g_yi =
+    do
+      proof <- case vote of 
+                 0 -> proveNo g_yi i xi
+                 1 -> proveYes g_yi i xi
+      pure (token, proof) 
+  where
+    token = (expSafe g_yi xi n) * (expSafe g vote n)
 
+-- ! FIXME: Either (Error "such and such is mudak") Integer
+computeTally :: [(Integer, CDSProof)] -> Integer
+computeTally xs = maybe (error "fuck") id $ find (\i -> expSafe g i n == p) [0..100]
+  where
+    p = product ( fst <$> xs)
+    
+validateTally :: [Integer] -> [Integer] -> [(Integer, CDSProof)] -> Either String ()
+validateTally hs xs proofs = if null ys
+                             then Right ()
+                             else Left $ format ys
+  where
+    ys = filter notValid $ zip [0..] (zip hs (zip xs proofs))
+    format errors = join $ intersperse "," ( formatSingle <$> errors) 
+    formatSingle (i, (h, (g_xj, (token, proof)))) = "Not valid vote: " ++ show i
+    notValid (i, (h, (g_xj, (token, proof)))) = 
+        token /= (CDS._y proof) || not (verifyCDS i h g_xj proof)  
 -------------------------
 
+-- NOW just put all together 
+-- ... and tests of course
+
+
+
+-- TODO: math on one-out-of-two-proof-of-knowledge
+-- TODO: unit tests
+-- TODO: extension for multiple candidates  
+-- TODO: import schnorr-nizk, use Curve25519
+-- TODO: interactive one-out-of-two proof of knowledge?
+
+
+{-
+
+verifyCDS ::
+     Integer
+  -> Integer -- g^yi
+  -> Integer -- g^xj
+  -> CDSProof         
+  -> Bool
+verifyCDS  i h x  (CDSProof y a1 b1 a2 b2 d1 d2 c r1 r2) =
+-}
