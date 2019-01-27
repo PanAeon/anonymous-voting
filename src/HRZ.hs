@@ -1,4 +1,5 @@
-module HRZ () where
+module HRZ (generateSecret, partFirstRound, validateZKPs, validateZKPs',
+            computeYi, roundTwo, computeTally, validateTally ) where
 
 import           Crypto.Random.Types (MonadRandom)
 import Crypto.Number.Generate(generateMax)
@@ -39,10 +40,21 @@ partFirstRound _id secret =
 -- after the round finishes, each P[i] checks validity of proofs  and computes
 -- g^y[i]
 
-validateZKPs :: [(Integer, Sch.SchnorrProof)] -> Bool
+validateZKPs :: [(Integer, Sch.SchnorrProof)] -> Bool -- ! FIXME: delete this shit!
 validateZKPs  = all areValid
   where
     areValid (pk, proof) = Sch.verify pk proof
+
+validateZKPs' :: [(String, (Integer, Sch.SchnorrProof))] -> Either String ()
+validateZKPs' xs = if null rs
+                   then Right ()
+                   else Left errorMsg
+  where
+    invalid (_, (pk, proof)) = not $ Sch.verify pk proof
+    rs = filter invalid xs
+    errorMsg = join $ intersperse "," ( formatSingle <$> rs) 
+    formatSingle (id_, _) = "First round zkp for the participant " ++ id_ ++ "is invalid"  
+   
 
 computeYi :: Integer  -> [Integer] -> Integer
 computeYi i  ys = as * ( maybe (error "smth went wrong") id (inverse bs Sch.n))
@@ -121,13 +133,3 @@ allShitTogether v0 v1 =
 -- TODO: interactive one-out-of-two proof of knowledge?
 
 
-{-
-
-verifyCDS ::
-     Integer
-  -> Integer -- g^yi
-  -> Integer -- g^xj
-  -> CDSProof         
-  -> Bool
-verifyCDS  i h x  (CDSProof y a1 b1 a2 b2 d1 d2 c r1 r2) =
--}

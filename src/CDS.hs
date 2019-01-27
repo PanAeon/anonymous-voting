@@ -27,7 +27,7 @@ data CDSProof = CDSProof {
              , _c  :: Integer
              , _r1  :: Integer
              , _r2  :: Integer
-             } deriving (Show, Eq)
+             } deriving (Show, Read, Eq)
 
 -- * Useful: https://en.wikipedia.org/wiki/Fiat%E2%80%93Shamir_heuristic
 

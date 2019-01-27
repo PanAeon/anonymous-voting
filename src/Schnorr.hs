@@ -86,7 +86,7 @@ data SchnorrProof = SchnorrProof {
                _id :: Integer
              , _gv :: Integer
              , _r  :: Integer
-             } deriving (Eq, Show)
+             } deriving (Eq, Show, Read)
   
   
 -- ! FIXME: read https://weakdh.org/imperfect-forward-secrecy-ccs15.pdf  

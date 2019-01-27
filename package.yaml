@@ -26,6 +26,9 @@ dependencies:
 - bytestring
 - random
 - memory
+- text
+- base64-bytestring
+- monad-loops
 
 default-extensions:
   - LambdaCase
