@@ -91,13 +91,12 @@ data SchnorrProof = SchnorrProof {
   
 -- ! FIXME: read https://weakdh.org/imperfect-forward-secrecy-ccs15.pdf  
 
--- note: xi is a random value, not a vote..
 
 subM :: Integer -> Integer -> Integer
 subM a b
   | a > b = (a - b) `mod` n
-  | b < n = ((a `mod` n) + n - (b `mod` n)) `mod` n
-  | otherwise = error "sub b > n not implemented"
+  | otherwise = ((a `mod` n) + n - (b `mod` n)) `mod` n
+  -- | otherwise = error "sub b > n not implemented"
   
 prove :: MonadRandom m => Integer -> (Integer, Integer) -> m SchnorrProof
 prove i (gxi, xi) = 
@@ -109,7 +108,7 @@ prove i (gxi, xi) =
                 <> (show gv)
                 <> (show gxi)
                 <> (show i)
-      r =  v `subM` (xi * z) -- ! FIXME: is this right? Do we need subM???
+      r =  v - (xi * z) -- ! FIXME: is this right? Do we need subM??? the answer is we DON'T!
     pure $ SchnorrProof i gv r
    
 verify :: Integer -> SchnorrProof -> Bool

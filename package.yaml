@@ -58,3 +58,7 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - anonymous-voting
+    - "tasty"
+    - "tasty-discover"
+    - "tasty-hspec"
+    - "tasty-quickcheck"

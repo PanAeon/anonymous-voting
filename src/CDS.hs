@@ -85,12 +85,12 @@ verifyCDS ::
   -> CDSProof         
   -> Bool
 verifyCDS  i h x  (CDSProof y a1 b1 a2 b2 d1 d2 c r1 r2) =
-   trace ("checkA1: " ++ show checkA1 ++
-          "\ncheckB1: " ++ show checkB1 ++
-          "\ncheckA2: " ++ show checkA2 ++
-          "\ncheckB2: " ++ show checkB2 ++
-          "\nc ok: " ++ show (c == (d1+d2) `mod` n) ++
-          "\nc == c'? " ++ show (c == c')) $
+--    trace ("checkA1: " ++ show checkA1 ++
+--           "\ncheckB1: " ++ show checkB1 ++
+--           "\ncheckA2: " ++ show checkA2 ++
+--           "\ncheckB2: " ++ show checkB2 ++
+--           "\nc ok: " ++ show (c == (d1+d2) `mod` n) ++
+--           "\nc == c'? " ++ show (c == c')) $
    (c == (d1 + d2) `mod` n) &&  (c == c') &&  validPoints && 
    checkA1 &&  checkA2 &&  checkB1 &&  checkB2 
   where
