@@ -29,6 +29,8 @@ dependencies:
 - text
 - base64-bytestring
 - monad-loops
+- zeromq4-haskell
+- async
 
 default-extensions:
   - LambdaCase
@@ -44,6 +46,42 @@ executables:
   anonymous-voting-exe:
     main:                Main.hs
     source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - anonymous-voting
+  zmq-hw-server:
+    main:                Main.hs
+    source-dirs:         app/hwserver
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - anonymous-voting
+  zmq-hw-client:
+    main:                Main.hs
+    source-dirs:         app/hwclient
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - anonymous-voting
+  voting-channel:
+    main:                Main.hs
+    source-dirs:         app/voting-channel
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - anonymous-voting
+  voting-client:
+    main:                Main.hs
+    source-dirs:         app/voting-client
     ghc-options:
     - -threaded
     - -rtsopts
