@@ -4,14 +4,22 @@ module Main where
 
 import System.ZMQ4.Monadic
 import Control.Concurrent (threadDelay)
-import Control.Monad (forM_)
+-- import Control.Monad (forM_)
 import qualified Data.ByteString.Char8 as BS
 import Data.Restricted
+import Control.Monad
+import Control.Monad.Catch
 -- import qualified Data.ByteString as BS
 
 -- provides common channel for publishers/subscribers .. using IPC?
+
 main :: IO ()
-main = runZMQ $ do
+main = catchAll main' handler
+  where
+   handler z =  (putStrLn "oops!") -- OK.
+
+main' :: IO ()
+main' = runZMQ $ do
     xsub <- socket XSub
     bind xsub "tcp://127.0.0.1:1488"
 

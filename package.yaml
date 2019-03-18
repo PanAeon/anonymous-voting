@@ -32,6 +32,7 @@ dependencies:
 - zeromq4-haskell
 - async
 - stm
+- exceptions
 
 default-extensions:
   - LambdaCase
