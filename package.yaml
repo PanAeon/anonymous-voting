@@ -31,6 +31,7 @@ dependencies:
 - monad-loops
 - zeromq4-haskell
 - async
+- stm
 
 default-extensions:
   - LambdaCase
@@ -82,6 +83,15 @@ executables:
   voting-client:
     main:                Main.hs
     source-dirs:         app/voting-client
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - anonymous-voting
+  voting-proxy:
+    main:                Main.hs
+    source-dirs:         app/voting-proxy
     ghc-options:
     - -threaded
     - -rtsopts

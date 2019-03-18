@@ -25,6 +25,8 @@ main = runZMQ $ do
             liftIO $ threadDelay $ 1 * 1000 * 1000
     send publisher [] "END"
 
+    
+
 --             forM_ [1..10] $ \update_nbr -> do
 --                 let string = "Update " ++ show update_nbr
 --                 send publisher (pack string) []
