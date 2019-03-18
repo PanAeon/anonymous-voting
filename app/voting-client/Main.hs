@@ -9,6 +9,7 @@ import Data.Restricted
 import qualified Control.Concurrent.Async as Async
 import qualified Control.Concurrent.STM as STM
 import Control.Concurrent(forkIO, threadDelay)
+import qualified Data.ByteString.Char8 as BS
 -- OK:
 -- register
 -- start-poll
@@ -23,11 +24,13 @@ main = do
     
 
 
-        -- subscriber <- socket Sub
-        -- setIdentity  (restrict "Hello") subscriber
-        -- subscribe subscriber ""
+        subscriber <- socket Sub
+        setIdentity  (restrict "Hello") subscriber
+        subscribe subscriber ""
          
-        -- connect subscriber "ipc:///tmp/xsub" -- ! FIXME: random!
+        connect subscriber "tcp://127.0.0.1:1499" -- ! FIXME: random!
+
+        async $ getupdates subscriber
     
         publisher <- socket Pub
         
@@ -94,7 +97,11 @@ waitForChan tchan =   Async.async $ atomically $ STM.readTChan tchan
 waitForUserStartPoll :: IO (Async.Async ())
 waitForUserStartPoll = Async.async $ void getLine
 
-
+getupdates:: Receiver t => Socket z t  -> ZMQ z ()
+getupdates sock = do
+     msg <- unpack <$> receive sock
+     putStrLn  $  "received" <> msg
+     getupdates sock 
     
 getUpdates :: Receiver t => Socket z t -> STM.TChan ()  -> ZMQ z ()     
 getUpdates sock chan = do

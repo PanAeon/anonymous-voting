@@ -12,20 +12,25 @@ import Data.Restricted
 -- provides common channel for publishers/subscribers .. using IPC?
 main :: IO ()
 main = runZMQ $ do
-    xsub <- socket Sub
-    
-    setIdentity  (restrict "Hello") xsub
-    subscribe xsub ""
-    bind xsub "tcp://127.0.0.1:1488" --"ipc:///tmp/xsub"
+    xsub <- socket XSub
+    bind xsub "tcp://127.0.0.1:1488"
+
+    xpub <- socket XPub
+    bind xpub "tcp://127.0.0.1:1499"
+
+    proxy xsub xpub Nothing
+--     setIdentity  (restrict "Hello") xsub
+--     subscribe xsub ""
+     --"ipc:///tmp/xsub"
     -- xpub <- socket XPub
     -- bind xpub "ipc:///tmp/xpub"
 
-    liftIO $ putStrLn ">>"
+--     liftIO $ putStrLn ">>"
     -- normal people use proxy socketA, socketB
-    forever $ do 
-        msg <- receive xsub
-        liftIO $ putStrLn "<<"
-        liftIO $ putStrLn $ BS.unpack $ "xsub rcv msg: " <> msg
+--     forever $ do 
+--         msg <- receive xsub
+--         liftIO $ putStrLn "<<"
+--         liftIO $ putStrLn $ BS.unpack $ "xsub rcv msg: " <> msg
         -- send xpub [] msg
     -- forever $ do
     --     msg <- receive xpub
