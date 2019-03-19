@@ -33,6 +33,7 @@ dependencies:
 - async
 - stm
 - exceptions
+- transformers
 
 default-extensions:
   - LambdaCase
